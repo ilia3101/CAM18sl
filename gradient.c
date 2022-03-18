@@ -276,15 +276,15 @@ int main()
             .name = "JzAzBz"
         },
         {
+            .to_XYZ = Lab_to_XYZ,
+            .to_CAM = XYZ_to_Lab,
+            .name = "CIELAB"
+        },
+        {
             .to_XYZ = nothing,
             .to_CAM = nothing,
             .name = "LinearLight"
         },
-        {
-            .to_XYZ = Lab_to_XYZ,
-            .to_CAM = XYZ_to_Lab,
-            .name = "CIELAB"
-        }
         /* sRGB disabled. */
         /* {
             .to_XYZ = cam_srgb2xyz,
