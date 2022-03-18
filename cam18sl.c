@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stddef.h>
 #include <math.h>
 
 /* Matrix code from mlv app 0.1 */
@@ -49,8 +49,6 @@ void cam18sl(double L, double M, double S, double BackgroundValue, double * aOut
         cam18sl_cone_compress(S, a)
     };
 
-    // printf("LMS_c = %f, %f, %f\n", LMS_c[0], LMS_c[1], LMS_c[1]);
-
     double * Aab = LMS_c;
     applyMatrix(Aab, LMSc_to_Aab);
 
@@ -61,7 +59,6 @@ void cam18sl(double L, double M, double S, double BackgroundValue, double * aOut
     if (QOut) *QOut = cam18sl_Q(Aab[1], Aab[2], Aab[0]);
 }
 
-/* Input a,b required, plus one of A or Q. Output LMS. */
 void cam18sl_inverse(double BackgroundValue, double a, double b, double * AIn, double * QIn, double * LOut, double * MOut, double * SOut)
 {
     double Aab_to_LMSc[9];
@@ -78,38 +75,9 @@ void cam18sl_inverse(double BackgroundValue, double a, double b, double * AIn, d
     double * LMS_c = Aab;
     applyMatrix(LMS_c, Aab_to_LMSc);
 
-    // printf("LMS_c = %f, %f, %f\n", LMS_c[0], LMS_c[1], LMS_c[1]);
-
     /* Uncompress LMS signal */
     double _a = (291.2 + 71.8*pow(BackgroundValue, 0.78));
     if (LOut) *LOut = cam18sl_cone_compress_inverse(LMS_c[0], _a);
     if (MOut) *MOut = cam18sl_cone_compress_inverse(LMS_c[1], _a);
     if (SOut) *SOut = cam18sl_cone_compress_inverse(LMS_c[2], _a);
-}
-
-int main()
-{
-    /* CAM18sl test with inverse */
-    double L_cone = 100;
-    double M_cone = 100;
-    double S_cone = 100;
-    printf("  LMS = %f, %f, %f\n", L_cone, M_cone, S_cone);
-
-    /* Surround cone value */
-    double bg_cone = 0.0;
-
-    /* M = colourfulness, Q = brightness, A = sorta luminance, ab = opponent signals */
-    double A, a, b, Q, M;
-    cam18sl(L_cone, M_cone, S_cone, bg_cone, &a, &b, &A, &M, &Q);
-    printf(" abQA = %f, %f, %f, %f\n", a, b, Q, A);
-
-    /* Inverse */
-    double L_cone2, M_cone2, S_cone2;
-    cam18sl_inverse(bg_cone, a, b, NULL, &Q, &L_cone2, &M_cone2, &S_cone2);
-    printf("  LMS = %f, %f, %f\n", L_cone2, M_cone2, S_cone2);
-
-    double x = 69.0;
-    printf("%f == %f\n", x, cam18sl_cone_compress_inverse(cam18sl_cone_compress(x, 200), 200));
-
-    return 0;
 }

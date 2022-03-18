@@ -1,5 +1,4 @@
 /* Basic matrix functions for 3x3 matrices */
-#include <stdint.h>
 #include <stdio.h>
 
 #include "matrix.h"
