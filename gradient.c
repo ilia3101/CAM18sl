@@ -85,50 +85,35 @@ void CAM18sl_Qab_to_XYZ(double Q, double a, double b, double * XOut, double * YO
     *ZOut = XYZ[2];
 }
 
+/**************************** Chromaticity Linear *****************************/
+
+/* Does nothing */
+void nothing(double a, double b, double c, double * x, double * y, double * z)
+{
+    *x = a;
+    *y = b;
+    *z = c;
+}
+
 /******************************************************************************/
 
-int main()
+void DoGradientTest(void * CAMToXYZFunc, void * XYZToCAMFunc, uint8_t * rgb1, uint8_t * rgb2, char * filename)
 {
-    /* Start and end point of test gradient. Values modified to fit in my
-     * display and also leave more room around the edges for the CAM to do
-     * its thing. */
-    uint8_t rgb1[] = {232, 232, 232};
-    uint8_t rgb2[] = {2, 2, 220};
-
-    /* CAM18sl test with inverse */
-    double L_cone = 100;
-    double M_cone = 100;
-    double S_cone = 100;
-    printf("  LMS = %f, %f, %f\n", L_cone, M_cone, S_cone);
-
-    /* Surround cone value */
-    double bg_cone = 0.0;
-
-    /* M = colourfulness, Q = brightness, A = sorta luminance, ab = opponent signals */
-    double A, a, b, Q, M;
-    cam18sl(L_cone, M_cone, S_cone, bg_cone, &a, &b, &A, &M, &Q);
-    printf(" abQA = %f, %f, %f, %f\n", a, b, Q, A);
-
-    /* Inverse */
-    double L_cone2, M_cone2, S_cone2;
-    cam18sl_inverse(bg_cone, a, b, NULL, &Q, &L_cone2, &M_cone2, &S_cone2);
-    printf("  LMS = %f, %f, %f\n", L_cone2, M_cone2, S_cone2);
-
-
-    int width = 269;
-    int height = 69;
-    uint8_t * data = malloc(width*height*sizeof(uint8_t)*3);
+    void (*to_XYZ)(double, double, double, double*, double*, double*) = CAMToXYZFunc;
+    void (*to_CAM)(double, double, double, double*, double*, double*) = XYZToCAMFunc;
 
     double start_XYZ[3];
     double end_XYZ[3];
     sRGB_to_XYZ(rgb1[0], rgb1[1], rgb1[2], start_XYZ);
     sRGB_to_XYZ(rgb2[0], rgb2[1], rgb2[2], end_XYZ);
-
     double start_CAM[3];
     double end_CAM[3];
-    XYZ_to_CAM18sl_Qab(start_XYZ[0], start_XYZ[1], start_XYZ[2], &start_CAM[0], &start_CAM[1], &start_CAM[2]);
-    XYZ_to_CAM18sl_Qab(end_XYZ[0], end_XYZ[1], end_XYZ[2], &end_CAM[0], &end_CAM[1], &end_CAM[2]);
+    to_CAM(start_XYZ[0], start_XYZ[1], start_XYZ[2], &start_CAM[0], &start_CAM[1], &start_CAM[2]);
+    to_CAM(end_XYZ[0], end_XYZ[1], end_XYZ[2], &end_CAM[0], &end_CAM[1], &end_CAM[2]);
 
+    int width = 300;
+    int height = 100;
+    uint8_t * data = malloc(width*height*sizeof(uint8_t)*3);
     for (int y = 0; y < height; ++y)
     {
         uint8_t * pix = data + (y * width * 3);
@@ -139,7 +124,7 @@ int main()
 
             double cam[3], xyz[3];
             for (int i = 0; i < 3; ++i) cam[i] = start_CAM[i]*ifac + end_CAM[i]*fac;
-            CAM18sl_Qab_to_XYZ(cam[0], cam[1], cam[2], xyz, xyz+1, xyz+2);
+            to_XYZ(cam[0], cam[1], cam[2], xyz, xyz+1, xyz+2);
 
             XYZ_to_sRGB(xyz[0], xyz[1], xyz[2], pix);
 
@@ -147,7 +132,24 @@ int main()
         }
     }
 
-    writebmp(data, width, height, "gradient.bmp");
+    writebmp(data, width, height, filename);
+}
+
+int main()
+{
+    uint8_t achromatic[] = {232, 232, 232};
+
+    uint8_t rgb_blue[] = {2, 2, 220};
+    uint8_t rgb_red[] = {240, 2, 2};
+    uint8_t rgb_yellow[] = {235, 235, 2};
+
+    DoGradientTest(CAM18sl_Qab_to_XYZ, XYZ_to_CAM18sl_Qab, achromatic, rgb_blue, "CAM18sl_blue.bmp");
+    DoGradientTest(CAM18sl_Qab_to_XYZ, XYZ_to_CAM18sl_Qab, achromatic, rgb_red, "CAM18sl_red.bmp");
+    DoGradientTest(CAM18sl_Qab_to_XYZ, XYZ_to_CAM18sl_Qab, achromatic, rgb_yellow, "CAM18sl_yellow.bmp");
+
+    DoGradientTest(nothing, nothing, achromatic, rgb_blue, "linear_blue.bmp");
+    DoGradientTest(nothing, nothing, achromatic, rgb_red, "linear_red.bmp");
+    DoGradientTest(nothing, nothing, achromatic, rgb_yellow, "linear_yellow.bmp");
 
     return 0;
 }
