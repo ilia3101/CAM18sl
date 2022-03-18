@@ -2,7 +2,7 @@
 #include <math.h>
 
 /* Matrix code from mlv app 0.1 */
-#include "matrix/matrix.h"
+#include "util.c"
 
 #include "cam18sl.h"
 

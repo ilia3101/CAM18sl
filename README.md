@@ -21,15 +21,15 @@ I have implemented CAM18sl in C and Python in this repo.
 
 To compile:
 ```
-gcc -c gradient.c main.c cam18sl.c matrix/matrix.c; gcc -lm -o cam18sl cam18sl.o matrix.o test.o; gcc -lm -o gradient cam18sl.o matrix.o gradient.o; rm *.o;
-```
-
-To run the test program:
-```
-./cam18sl
+gcc -c gradient.c inverse_test.c cam18sl.c; gcc -lm -o inverse_test cam18sl.o inverse_test.o; gcc -lm -o gradient cam18sl.o gradient.o; rm *.o;
 ```
 
 To run the gradient generator program:
 ```
 ./gradient
+```
+
+To run the inverse verification program:
+```
+./inverse_test
 ```
