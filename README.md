@@ -3,7 +3,7 @@ Testing CAM18sl model from this document: https://opg.optica.org/oe/fulltext.cfm
 
 The document has no mention of hue. However the model appears to have good hue linearity, maybe even better than Jz.
 
-I have implemented CAM18sl in C
+I have implemented CAM18sl in C and Python in this repo.
 
 # Comparisons with other models
 
