@@ -4,6 +4,8 @@
 /* Matrix code from mlv app 0.1 */
 #include "matrix/matrix.h"
 
+#include "cam18sl.h"
+
 #define p 0.58
 
 double cam18sl_cone_compress(double x, double a)

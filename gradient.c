@@ -6,6 +6,8 @@
 #include "cam18sl.h"
 #include "matrix/matrix.h"
 
+#include "jz_and_lab.c"
+
 void writebmp(unsigned char * data, int width, int height, char * filename) {
     int rowbytes = width*3+(4-(width*3%4))%4, imagesize = rowbytes*height, y;
     uint16_t header[] = {0x4D42,0,0,0,0,26,0,12,0,width,height,1,24};
@@ -67,19 +69,105 @@ double lms2006_10_to_xyz[] = {
     0.00000000, 0.00000000, 2.14687945
 };
 
+/* To represent 100 nits. */
+#define CAM18sl_brightness 100
+
 void XYZ_to_CAM18sl_Qab(double X, double Y, double Z, double * QOut, double * aOut, double * bOut)
 {
     double to_LMS[9]; invertMatrix(lms2006_10_to_xyz, to_LMS);
-    double LMS[] = {X,Y,Z}; applyMatrix(LMS, to_LMS);
+    double LMS[3] = {X,Y,Z}; applyMatrix(LMS, to_LMS);
+
+    /* Match D65 (sRGB(255,255,255)) to 1,1,1 in 2006 10 degree LMS which CAM18 uses,
+     * then multiply by the nits factor. */
+    double D65_in_LMS[3];
+    sRGB_to_XYZ(255,255,255,D65_in_LMS);
+    applyMatrix(D65_in_LMS, to_LMS);
+
+    for (int i=0;i<3;++i) LMS[i] *= CAM18sl_brightness / D65_in_LMS[i];
     cam18sl(LMS[0], LMS[1], LMS[2], 0, aOut, bOut, NULL, NULL, QOut);
 }
 
 void CAM18sl_Qab_to_XYZ(double Q, double a, double b, double * XOut, double * YOut, double * ZOut)
 {
     double LMS[3];
+    double to_LMS[9]; invertMatrix(lms2006_10_to_xyz, to_LMS);
+
+    /* Find D65 in LMS so we can undo the VOn kries adaptation done in the forward transform */
+    double D65_in_LMS[3];
+    sRGB_to_XYZ(255,255,255,D65_in_LMS);
+    applyMatrix(D65_in_LMS, to_LMS);
+
     cam18sl_inverse(0, a, b, NULL, &Q, LMS, LMS+1, LMS+2);
+    for (int i=0;i<3;++i) LMS[i] /= CAM18sl_brightness / D65_in_LMS[i];
     applyMatrix(LMS, lms2006_10_to_xyz);
+
     double * XYZ = LMS;
+    *XOut = XYZ[0];
+    *YOut = XYZ[1];
+    *ZOut = XYZ[2];
+}
+
+/*********************************** JzAzBz ***********************************/
+
+#define Jzazbz_brightness 100
+
+void XYZ_to_Jz(double X, double Y, double Z, double * JzOut, double * azOut, double * bzOut)
+{
+    float XYZ[3] = {X,Y,Z};
+    float JzAzBz[3];
+
+    for (int i=0;i<3;++i) XYZ[i] *= Jzazbz_brightness;
+
+    XYZ_to_Jzazbz(XYZ, JzAzBz, 1);
+
+    *JzOut = JzAzBz[0];
+    *azOut = JzAzBz[1];
+    *bzOut = JzAzBz[2];
+}
+
+void Jz_to_XYZ(double Jz, double az, double bz, double * XOut, double * YOut, double * ZOut)
+{
+    float JzAzBz[3] = {Jz,az,bz};
+    float XYZ[3];
+
+    Jzazbz_to_XYZ(JzAzBz, XYZ, 1);
+
+    for (int i=0;i<3;++i) XYZ[i] /= Jzazbz_brightness;
+
+    *XOut = XYZ[0];
+    *YOut = XYZ[1];
+    *ZOut = XYZ[2];
+}
+
+/*********************************** CIELAB ***********************************/
+
+void XYZ_to_Lab(double X, double Y, double Z, double * LOut, double * aOut, double * bOut)
+{
+    float XYZ[3] = {X,Y,Z};
+    float Lab[3];
+
+    /* For lab adaptaion */
+    double w[3]; sRGB_to_XYZ(255,255,255,w);
+    float D65_in_XYZ[3] = {w[0], w[1], w[2]};
+
+    XYZ_to_CIELAB(XYZ, Lab, D65_in_XYZ, 1);
+
+    *LOut = Lab[0];
+    *aOut = Lab[1];
+    *bOut = Lab[2];
+}
+
+void Lab_to_XYZ(double L, double a, double b, double * XOut, double * YOut, double * ZOut)
+{
+    float Lab[3] = {L,a,b};
+    float XYZ[3];
+
+    /* For lab adaptaion */
+    double w[3]; sRGB_to_XYZ(255,255,255,w);
+    float D65_in_XYZ[3] = {w[0], w[1], w[2]};
+
+    CIELAB_to_XYZ(Lab, XYZ, D65_in_XYZ, 1);
+
     *XOut = XYZ[0];
     *YOut = XYZ[1];
     *ZOut = XYZ[2];
@@ -138,13 +226,14 @@ void DoGradientTest(cam_t * model, uint8_t * rgb1, uint8_t * rgb2, char * filena
 
     int width = 300;
     int height = 100;
-    uint8_t * data = malloc(width*height*sizeof(uint8_t)*3);
-    for (int y = 0; y < height; ++y)
+    uint8_t * data = calloc(width*height,sizeof(uint8_t)*3);
+    int border = 3;
+    for (int y = border; y < height-border; ++y)
     {
-        uint8_t * pix = data + (y * width * 3);
-        for (int x = 0; x < width; ++x)
+        uint8_t * pix = data + ((y * width + border) * 3);
+        for (int x = border; x < width-border; ++x)
         {
-            double fac = ((double)x) / ((double)width-1.0);
+            double fac = ((double)x-border) / ((double)width-1.0-2.0*border);
             double ifac = 1.0 - fac;
 
             double cam[3], xyz[3];
@@ -158,6 +247,7 @@ void DoGradientTest(cam_t * model, uint8_t * rgb1, uint8_t * rgb2, char * filena
     }
 
     writebmp(data, width, height, filename);
+    free(data);
 }
 
 typedef struct {
@@ -185,10 +275,21 @@ int main()
             .to_CAM = nothing,
             .name = "LinearLight"
         },
-        {
+        /* sRGB disabled. */
+        /* {
             .to_XYZ = cam_srgb2xyz,
             .to_CAM = cam_xyz2srgb,
             .name = "sRGB"
+        }, */
+        {
+            .to_XYZ = Jz_to_XYZ,
+            .to_CAM = XYZ_to_Jz,
+            .name = "JzAzBz"
+        },
+        {
+            .to_XYZ = Lab_to_XYZ,
+            .to_CAM = XYZ_to_Lab,
+            .name = "CIELAB"
         }
     };
 
