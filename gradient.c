@@ -271,26 +271,26 @@ int main()
             .name = "CAM18sl"
         },
         {
-            .to_XYZ = nothing,
-            .to_CAM = nothing,
-            .name = "LinearLight"
-        },
-        /* sRGB disabled. */
-        /* {
-            .to_XYZ = cam_srgb2xyz,
-            .to_CAM = cam_xyz2srgb,
-            .name = "sRGB"
-        }, */
-        {
             .to_XYZ = Jz_to_XYZ,
             .to_CAM = XYZ_to_Jz,
             .name = "JzAzBz"
+        },
+        {
+            .to_XYZ = nothing,
+            .to_CAM = nothing,
+            .name = "LinearLight"
         },
         {
             .to_XYZ = Lab_to_XYZ,
             .to_CAM = XYZ_to_Lab,
             .name = "CIELAB"
         }
+        /* sRGB disabled. */
+        /* {
+            .to_XYZ = cam_srgb2xyz,
+            .to_CAM = cam_xyz2srgb,
+            .name = "sRGB"
+        }, */
     };
 
     gradient_t gradients[] = {
@@ -331,13 +331,24 @@ int main()
         }
     };
 
+#ifdef __APPLE__
+    FILE * comparisons_output = fopen("comparisons.md", "w");
+    fprintf(comparisons_output, "|");
     for (int c = 0; c < sizeof(cams)/sizeof(cams[0]); ++c)
-    {
-        cam_t * cam = &cams[c];
+        fprintf(comparisons_output, " %s |", cams[c].name);
+    fprintf(comparisons_output, "\n|");
+    for (int c = 0; c < sizeof(cams)/sizeof(cams[0]); ++c)
+        fprintf(comparisons_output, " :--: |");
+#endif
 
-        for (int g = 0; g < sizeof(gradients)/sizeof(gradients[0]); ++g)
+    for (int g = 0; g < sizeof(gradients)/sizeof(gradients[0]); ++g)
+    {
+        gradient_t * gradient = &gradients[g];
+        fprintf(comparisons_output, "\n|");
+        for (int c = 0; c < sizeof(cams)/sizeof(cams[0]); ++c)
         {
-            gradient_t * gradient = &gradients[g];
+            cam_t * cam = &cams[c];
+
             char filename[100];
             snprintf(filename, sizeof(filename)-1, "images/%s_%s.bmp", cam->name, gradient->name);
             puts(filename);
@@ -348,6 +359,7 @@ int main()
             char command[1000];
             snprintf(command, sizeof(command)-1, "sips -s format png %s --out %s.png", filename, filename);
             system(command);
+            fprintf(comparisons_output, " ![gradient](%s.png) |", filename);  
 #endif
         }
     }
@@ -355,7 +367,9 @@ int main()
     puts("Done");
 
 
+
 #ifdef __APPLE__
+    fclose(comparisons_output);
     system("rm images/*.bmp");
 #endif
 
