@@ -95,21 +95,46 @@ void nothing(double a, double b, double c, double * x, double * y, double * z)
     *z = c;
 }
 
+/********************************** sRGB LOL **********************************/
+
+/* Does nothing */
+void cam_xyz2srgb(double x, double y, double z, double * r, double * g, double * b)
+{
+    uint8_t srgb[3];
+    XYZ_to_sRGB(x,y,z,srgb);
+    *r = srgb[0];
+    *g = srgb[1];
+    *b = srgb[2];
+}
+
+void cam_srgb2xyz(double r, double g, double b, double * x, double * y, double * z)
+{
+    double XYZ[3];
+    sRGB_to_XYZ(r, g, b, XYZ);
+    *x = XYZ[0];
+    *y = XYZ[1];
+    *z = XYZ[2];
+}
+
 /******************************************************************************/
 
-void DoGradientTest(void * CAMToXYZFunc, void * XYZToCAMFunc, uint8_t * rgb1, uint8_t * rgb2, char * filename)
-{
-    void (*to_XYZ)(double, double, double, double*, double*, double*) = CAMToXYZFunc;
-    void (*to_CAM)(double, double, double, double*, double*, double*) = XYZToCAMFunc;
+/* structrue for defining a cam to gradient test */
+typedef struct {
+    void (*to_XYZ)(double, double, double, double*, double*, double*);
+    void (*to_CAM)(double, double, double, double*, double*, double*);
+    char * name;
+} cam_t;
 
+void DoGradientTest(cam_t * model, uint8_t * rgb1, uint8_t * rgb2, char * filename)
+{
     double start_XYZ[3];
     double end_XYZ[3];
     sRGB_to_XYZ(rgb1[0], rgb1[1], rgb1[2], start_XYZ);
     sRGB_to_XYZ(rgb2[0], rgb2[1], rgb2[2], end_XYZ);
     double start_CAM[3];
     double end_CAM[3];
-    to_CAM(start_XYZ[0], start_XYZ[1], start_XYZ[2], &start_CAM[0], &start_CAM[1], &start_CAM[2]);
-    to_CAM(end_XYZ[0], end_XYZ[1], end_XYZ[2], &end_CAM[0], &end_CAM[1], &end_CAM[2]);
+    model->to_CAM(start_XYZ[0], start_XYZ[1], start_XYZ[2], &start_CAM[0], &start_CAM[1], &start_CAM[2]);
+    model->to_CAM(end_XYZ[0], end_XYZ[1], end_XYZ[2], &end_CAM[0], &end_CAM[1], &end_CAM[2]);
 
     int width = 300;
     int height = 100;
@@ -124,7 +149,7 @@ void DoGradientTest(void * CAMToXYZFunc, void * XYZToCAMFunc, uint8_t * rgb1, ui
 
             double cam[3], xyz[3];
             for (int i = 0; i < 3; ++i) cam[i] = start_CAM[i]*ifac + end_CAM[i]*fac;
-            to_XYZ(cam[0], cam[1], cam[2], xyz, xyz+1, xyz+2);
+            model->to_XYZ(cam[0], cam[1], cam[2], xyz, xyz+1, xyz+2);
 
             XYZ_to_sRGB(xyz[0], xyz[1], xyz[2], pix);
 
@@ -135,21 +160,103 @@ void DoGradientTest(void * CAMToXYZFunc, void * XYZToCAMFunc, uint8_t * rgb1, ui
     writebmp(data, width, height, filename);
 }
 
+typedef struct {
+    uint8_t * rgb_from;
+    uint8_t * rgb_to;
+    char * name;
+} gradient_t;
+
 int main()
 {
     uint8_t achromatic[] = {232, 232, 232};
+    uint8_t blue[] = {2, 2, 220};
+    uint8_t red[] = {240, 2, 2};
+    uint8_t yellow[] = {235, 235, 2};
+    uint8_t limegreen[] = {1, 235, 34};
 
-    uint8_t rgb_blue[] = {2, 2, 220};
-    uint8_t rgb_red[] = {240, 2, 2};
-    uint8_t rgb_yellow[] = {235, 235, 2};
+    cam_t cams[] = {
+        {
+            .to_XYZ = CAM18sl_Qab_to_XYZ,
+            .to_CAM = XYZ_to_CAM18sl_Qab,
+            .name = "CAM18sl"
+        },
+        {
+            .to_XYZ = nothing,
+            .to_CAM = nothing,
+            .name = "LinearLight"
+        },
+        {
+            .to_XYZ = cam_srgb2xyz,
+            .to_CAM = cam_xyz2srgb,
+            .name = "sRGB"
+        }
+    };
 
-    DoGradientTest(CAM18sl_Qab_to_XYZ, XYZ_to_CAM18sl_Qab, achromatic, rgb_blue, "CAM18sl_blue.bmp");
-    DoGradientTest(CAM18sl_Qab_to_XYZ, XYZ_to_CAM18sl_Qab, achromatic, rgb_red, "CAM18sl_red.bmp");
-    DoGradientTest(CAM18sl_Qab_to_XYZ, XYZ_to_CAM18sl_Qab, achromatic, rgb_yellow, "CAM18sl_yellow.bmp");
+    gradient_t gradients[] = {
+        {
+            .rgb_from = achromatic,
+            .rgb_to = blue,
+            .name = "white-blue"
+        },
+        {
+            .rgb_from = achromatic,
+            .rgb_to = yellow,
+            .name = "white-yellow"
+        },
+        {
+            .rgb_from = achromatic,
+            .rgb_to = red,
+            .name = "white-red"
+        },
+        {
+            .rgb_from = limegreen,
+            .rgb_to = blue,
+            .name = "limegreen-blue"
+        },
+        {
+            .rgb_from = blue,
+            .rgb_to = red,
+            .name = "blue-red"
+        },
+        {
+            .rgb_from = blue,
+            .rgb_to = yellow,
+            .name = "blue-yellow"
+        },
+        {
+            .rgb_from = red,
+            .rgb_to = yellow,
+            .name = "red-yellow"
+        }
+    };
 
-    DoGradientTest(nothing, nothing, achromatic, rgb_blue, "linear_blue.bmp");
-    DoGradientTest(nothing, nothing, achromatic, rgb_red, "linear_red.bmp");
-    DoGradientTest(nothing, nothing, achromatic, rgb_yellow, "linear_yellow.bmp");
+    for (int c = 0; c < sizeof(cams)/sizeof(cams[0]); ++c)
+    {
+        cam_t * cam = &cams[c];
+
+        for (int g = 0; g < sizeof(gradients)/sizeof(gradients[0]); ++g)
+        {
+            gradient_t * gradient = &gradients[g];
+            char filename[100];
+            snprintf(filename, sizeof(filename)-1, "images/%s_%s.bmp", cam->name, gradient->name);
+            puts(filename);
+
+            DoGradientTest(cam, gradient->rgb_from, gradient->rgb_to, filename);
+
+#ifdef __APPLE__
+            char command[1000];
+            snprintf(command, sizeof(command)-1, "sips -s format png %s --out %s.png", filename, filename);
+            system(command);
+#endif
+        }
+    }
+
+    puts("Done");
+
+
+#ifdef __APPLE__
+    system("rm images/*.bmp");
+#endif
 
     return 0;
 }
