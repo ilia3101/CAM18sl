@@ -1,3 +1,7 @@
+/*
+    Implementations of CIELAB and Jzazbz just for comparison with CAM18sl
+*/
+
 static float CIELAB_f(float t)
 {
     float six29_cubed = 0.00885645168; /* 6/29 cubed */
