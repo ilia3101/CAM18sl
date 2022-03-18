@@ -1,14 +1,6 @@
 import math
 import numpy as np
 
-def applyMatrix(M, V):
-    V0 = M[0] * V[0] + M[1] * V[1] + M[2] * V[2]
-    V1 = M[3] * V[0] + M[4] * V[1] + M[5] * V[2]
-    V2 = M[6] * V[0] + M[7] * V[1] + M[8] * V[2]
-    V[0] = V0
-    V[1] = V1
-    V[2] = V2
-
 p = 0.58
 
 def cam18sl_cone_compress(x, a):
@@ -17,6 +9,7 @@ def cam18sl_cone_compress(x, a):
 def cam18sl_cone_compress_inverse(x, a):
     return math.pow((x * math.pow(a, p)) / (1.0 - x), 1.0/p)
 
+# Matrix applied to LMS (compressed) to create opponent signals.
 LMSc_to_Aab = np.array([
     [2.0,            1.0,            1.0/20.0],
     [63.0/100.0,    -189.0/275.0,    63.0/1100.0],
