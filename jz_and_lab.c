@@ -148,7 +148,7 @@ void XYZ_to_Jzazbz(float * InputXYZ, float * OutputJzazbz, uint64_t N)
     }
 }
 
-void Jzazbz_to_XYZ(float * InputJzazbz, float * utputXYZ, uint64_t N)
+void Jzazbz_to_XYZ(float * InputJzazbz, float * OutputXYZ, uint64_t N)
 {
     float * Jzazbz = InputJzazbz;
     float * XYZ = OutputXYZ;
