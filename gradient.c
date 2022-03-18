@@ -260,7 +260,7 @@ int main()
 {
     uint8_t achromatic[] = {232, 232, 232};
     uint8_t blue[] = {2, 2, 220};
-    uint8_t red[] = {240, 2, 2};
+    uint8_t red[] = {240, 56, 2};
     uint8_t yellow[] = {235, 235, 2};
     uint8_t limegreen[] = {1, 235, 34};
 
@@ -299,11 +299,11 @@ int main()
             .rgb_to = blue,
             .name = "white-blue"
         },
-        {
+        /* {
             .rgb_from = achromatic,
             .rgb_to = yellow,
             .name = "white-yellow"
-        },
+        }, */
         {
             .rgb_from = achromatic,
             .rgb_to = red,
@@ -314,11 +314,11 @@ int main()
             .rgb_to = blue,
             .name = "limegreen-blue"
         },
-        {
+        /* {
             .rgb_from = blue,
             .rgb_to = red,
             .name = "blue-red"
-        },
+        }, */
         {
             .rgb_from = blue,
             .rgb_to = yellow,
