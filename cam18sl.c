@@ -69,6 +69,8 @@ void cam18sl_inverse(double BackgroundValue, double a, double b, double * AIn, d
     /* If no A (lumninanceish) signal, get it out from brightness (Q) */
     if (AIn == NULL) {
         Aab[0] = cam18sl_A(a, b, *QIn);
+    } else {
+        Aab[0] = *AIn;
     }
 
     /* Get back to LMS compressed signal */
