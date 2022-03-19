@@ -9,11 +9,11 @@ def cam18sl_cone_compress(x, a):
 def cam18sl_cone_compress_inverse(x, a):
     return math.pow((x * math.pow(a, p)) / (1.0 - x), 1.0/p)
 
-# Matrix applied to LMS (compressed) to create opponent signals.
+# Opponent process represented as a matrix
 LMSc_to_Aab = np.array([
-    [2.0,            1.0,            1.0/20.0],
-    [63.0/100.0,    -189.0/275.0,    63.0/1100.0],
-    [3.0/25.0,       3.0/25.0,      -6.0/25.0]
+    np.array([2.0,        1.0,  1.0/20.0]),
+    np.array([1.0, -12.0/11.0,  1.0/11.0]) * 0.63,
+    np.array([1.0,        1.0,      -2.0]) * 0.12
 ])
 
 # colourfulness
@@ -22,11 +22,11 @@ def cam18sl_M(a, b):
 
 # Brightness
 def cam18sl_Q(a, b, A):
-    return 0.937 * (A + 7.824 * math.pow(a*a+b*b, 0.545));
+    return 0.937 * (A + 0.0024 * cam18sl_M(a,b)**1.09);
 
 # Luminance-ish
 def cam18sl_A(a, b, Q):
-    return Q / 0.937 - 7.824 * math.pow(a*a+b*b, 0.545)
+    return Q / 0.937 - 0.0024 * cam18sl_M(a,b)**1.09
 
 def cam18sl(L, M, S, BackgroundValue):
     a = (291.2 + 71.8*math.pow(BackgroundValue, 0.78))
@@ -67,7 +67,7 @@ def cam18sl_inverse(BackgroundValue, a, b, A, Q):
 
 
 # CAM18sl test with inverse
-L_cone, M_cone, S_cone = 100, 100, 100
+L_cone, M_cone, S_cone = 25, 100, 75
 print("  LMS = %f, %f, %f" % (L_cone, M_cone, S_cone))
 
 # Surround cone value
