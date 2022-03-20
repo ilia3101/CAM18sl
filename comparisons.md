@@ -1,9 +1,9 @@
-| CAM18sl | JzAzBz | CIELAB | Luv |
+| CAM18sl | JzAzBz | CIELAB | CIELUV |
 | :--: | :--: | :--: | :--: |
-| ![gradient](images/CAM18sl_white-blue.bmp.png) | ![gradient](images/JzAzBz_white-blue.bmp.png) | ![gradient](images/CIELAB_white-blue.bmp.png) | ![gradient](images/Luv_white-blue.bmp.png) |
-| ![gradient](images/CAM18sl_white-yellow.bmp.png) | ![gradient](images/JzAzBz_white-yellow.bmp.png) | ![gradient](images/CIELAB_white-yellow.bmp.png) | ![gradient](images/Luv_white-yellow.bmp.png) |
-| ![gradient](images/CAM18sl_white-red.bmp.png) | ![gradient](images/JzAzBz_white-red.bmp.png) | ![gradient](images/CIELAB_white-red.bmp.png) | ![gradient](images/Luv_white-red.bmp.png) |
-| ![gradient](images/CAM18sl_limegreen-blue.bmp.png) | ![gradient](images/JzAzBz_limegreen-blue.bmp.png) | ![gradient](images/CIELAB_limegreen-blue.bmp.png) | ![gradient](images/Luv_limegreen-blue.bmp.png) |
-| ![gradient](images/CAM18sl_blue-red.bmp.png) | ![gradient](images/JzAzBz_blue-red.bmp.png) | ![gradient](images/CIELAB_blue-red.bmp.png) | ![gradient](images/Luv_blue-red.bmp.png) |
-| ![gradient](images/CAM18sl_blue-yellow.bmp.png) | ![gradient](images/JzAzBz_blue-yellow.bmp.png) | ![gradient](images/CIELAB_blue-yellow.bmp.png) | ![gradient](images/Luv_blue-yellow.bmp.png) |
-| ![gradient](images/CAM18sl_red-yellow.bmp.png) | ![gradient](images/JzAzBz_red-yellow.bmp.png) | ![gradient](images/CIELAB_red-yellow.bmp.png) | ![gradient](images/Luv_red-yellow.bmp.png) |
+| ![gradient](images/CAM18sl_white-blue.bmp.png) | ![gradient](images/JzAzBz_white-blue.bmp.png) | ![gradient](images/CIELAB_white-blue.bmp.png) | ![gradient](images/CIELUV_white-blue.bmp.png) |
+| ![gradient](images/CAM18sl_white-yellow.bmp.png) | ![gradient](images/JzAzBz_white-yellow.bmp.png) | ![gradient](images/CIELAB_white-yellow.bmp.png) | ![gradient](images/CIELUV_white-yellow.bmp.png) |
+| ![gradient](images/CAM18sl_white-red.bmp.png) | ![gradient](images/JzAzBz_white-red.bmp.png) | ![gradient](images/CIELAB_white-red.bmp.png) | ![gradient](images/CIELUV_white-red.bmp.png) |
+| ![gradient](images/CAM18sl_limegreen-blue.bmp.png) | ![gradient](images/JzAzBz_limegreen-blue.bmp.png) | ![gradient](images/CIELAB_limegreen-blue.bmp.png) | ![gradient](images/CIELUV_limegreen-blue.bmp.png) |
+| ![gradient](images/CAM18sl_blue-red.bmp.png) | ![gradient](images/JzAzBz_blue-red.bmp.png) | ![gradient](images/CIELAB_blue-red.bmp.png) | ![gradient](images/CIELUV_blue-red.bmp.png) |
+| ![gradient](images/CAM18sl_blue-yellow.bmp.png) | ![gradient](images/JzAzBz_blue-yellow.bmp.png) | ![gradient](images/CIELAB_blue-yellow.bmp.png) | ![gradient](images/CIELUV_blue-yellow.bmp.png) |
+| ![gradient](images/CAM18sl_red-yellow.bmp.png) | ![gradient](images/JzAzBz_red-yellow.bmp.png) | ![gradient](images/CIELAB_red-yellow.bmp.png) | ![gradient](images/CIELUV_red-yellow.bmp.png) |
