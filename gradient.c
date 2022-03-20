@@ -123,14 +123,31 @@ void Lab_to_XYZ(double L, double a, double b, double * XOut, double * YOut, doub
     *ZOut = XYZ[2];
 }
 
-/**************************** Chromaticity Linear *****************************/
+/************************* Chromaticity Linear (Luv) ***************************/
 
-/* Does nothing */
-void nothing(double a, double b, double c, double * x, double * y, double * z)
+/* Approximate implementatino of Luv, using cube root instead of the whole
+ * curve. It's fine, this would only affect dark values anyway. */
+
+float d65_v = 0.465;
+float d65_u = 0.23;
+
+void XYZ_to_Luv(double X, double Y, double Z, double * L, double * u, double * v)
 {
-    *x = a;
-    *y = b;
-    *z = c;
+    float d = X + (15.0f * Y) + (3.0f * Z);
+    float _L = cbrt(Y);
+    *L = _L;
+    *u = ((4.0f * X) / d - d65_u) * _L;
+    *v = ((9.0f * Y) / d - d65_v) * _L;
+}
+
+void Luv_to_XYZ(double L, double u, double v, double * x, double * y, double * z)
+{
+    u = u/L + d65_u;
+    v = v/L + d65_v;
+    float Y = L*L*L;
+    *x = Y * (9.0f*u) / (4.0f*v);
+    *y = Y;
+    *z = Y * (12.0f - 3.0f*u - 20.0f*v) / (4.0f*v);
 }
 
 /********************************** sRGB LOL **********************************/
@@ -231,9 +248,9 @@ int main()
             .name = "CIELAB"
         },
         {
-            .to_XYZ = nothing,
-            .to_CAM = nothing,
-            .name = "LinearLight"
+            .to_XYZ = Luv_to_XYZ,
+            .to_CAM = XYZ_to_Luv,
+            .name = "Luv"
         },
         /* sRGB disabled. */
         /* {
