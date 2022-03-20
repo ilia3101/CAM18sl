@@ -250,7 +250,7 @@ int main()
         {
             .to_XYZ = Luv_to_XYZ,
             .to_CAM = XYZ_to_Luv,
-            .name = "Luv"
+            .name = "CIELUV"
         },
         /* sRGB disabled. */
         /* {

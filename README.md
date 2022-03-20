@@ -7,7 +7,7 @@ I have implemented CAM18sl in C and Python in this repo.
 
 # Comparisons with other models
 
-| CAM18sl | JzAzBz | CIELAB | Luv |
+| CAM18sl | JzAzBz | CIELAB | CIELUV |
 | :--: | :--: | :--: | :--: |
 | ![gradient](images/CAM18sl_white-blue.bmp.png) | ![gradient](images/JzAzBz_white-blue.bmp.png) | ![gradient](images/CIELAB_white-blue.bmp.png) | ![gradient](images/Luv_white-blue.bmp.png) |
 | ![gradient](images/CAM18sl_white-yellow.bmp.png) | ![gradient](images/JzAzBz_white-yellow.bmp.png) | ![gradient](images/CIELAB_white-yellow.bmp.png) | ![gradient](images/Luv_white-yellow.bmp.png) |
