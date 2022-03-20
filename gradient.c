@@ -211,7 +211,7 @@ int main()
     uint8_t achromatic[] = {232, 232, 232};
     uint8_t blue[] = {2, 2, 220};
     uint8_t red[] = {240, 32, 2};
-    uint8_t yellow[] = {235, 235, 2};
+    uint8_t yellow[] = {254, 214, 2};
     uint8_t limegreen[] = {1, 235, 34};
 
     cam_t cams[] = {

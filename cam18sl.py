@@ -67,11 +67,11 @@ def cam18sl_inverse(BackgroundValue, a, b, A, Q):
 
 
 # CAM18sl test with inverse
-L_cone, M_cone, S_cone = 25, 100, 75
+L_cone, M_cone, S_cone = 100, 100, 100
 print("  LMS = %f, %f, %f" % (L_cone, M_cone, S_cone))
 
-# Surround cone value
-bg_cone = 0
+# Surround cone value (cd/m^2)
+bg_cone = 18
 
 # M = colourfulness, Q = brightness, A = sorta luminance, ab = opponent signals
 cam = cam18sl(L_cone, M_cone, S_cone, bg_cone)
