@@ -15,9 +15,9 @@ This very strong compression leads to a maximum possible brightness of 3.05 'bri
 
 > The brightness Q is expressed in bright. 1 bright corresponds to the apparent brightness of a 10° spectral equal-energy self-luminous stimulus having a CIE 1964 10° luminance of 100 cd/m2 and surrounded by a dark background.
 
-This upper limit of 3.05 appears to come from the `2L + M + 1/20S` sum used for calculating the achromatic (luminance) signal, so perhaps not worth reading in to. This feels very much like it was intenionally 'left blank', to avoid adding unverifiable magic numbers and doing fitting magic. As a result I am not convinced, I also *feel* that it's possible to experience a brightness sensation greater than *3 brights*, according to CAM18sl's own definition of *1 bright* (look at a lamp).
+This upper limit of 3.05 appears to come from the `2L + M + 1/20S` sum used for calculating the achromatic (luminance) signal, so perhaps not worth reading in to. This feels very much like it was intenionally 'left blank', to avoid adding unverifiable magic numbers and doing fitting magic. As a result I am not convinced, I also *feel* that it's possible to experience a brightness sensation greater than *3 brights*, according to CAM18sl's own definition of *1 bright* (like, look at a lamp).
 
-In conclusion, I think the cone compression is likely not correct, in terms of where it places the semi saturaion point. I suspect it's too low. Because of the very low upper limit, and the seemingly intentional lack of scaling, which screams: "we don't claim this is correct either".
+In conclusion, I think the cone compression is likely not correct in terms of where it places the semi saturaion point. I suspect it's too low. Because of the very low upper limit, and the seemingly intentional lack of scaling, which screams: "we don't claim this is correct either".
 
 But I respect it more than CIECAM02/CAM16, where the semi saturation point is placed so high up that the cone compression does effectively nothing. Might as well be a pure power.
 
