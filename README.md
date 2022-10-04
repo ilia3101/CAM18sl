@@ -23,6 +23,8 @@ But I respect it more than CIECAM02/CAM16, where the semi saturation point is pl
 
 # Comparisons with other models
 
+Just some rather meaningless gradients. The blue one is most interesting imo. It is neither too cyan like most hue models, nor mauve like Abney. It seems quite perfect.
+
 | CAM18sl | JzAzBz | CIELAB | CIELUV |
 | :--: | :--: | :--: | :--: |
 | ![gradient](images/CAM18sl_white-blue.bmp.png) | ![gradient](images/JzAzBz_white-blue.bmp.png) | ![gradient](images/CIELAB_white-blue.bmp.png) | ![gradient](images/CIELUV_white-blue.bmp.png) |
