@@ -17,7 +17,7 @@ This very strong compression leads to a maximum possible brightness of 3.05 'bri
 
 This upper limit of 3.05 appears to come from the `2L + M + 1/20S` sum used for calculating the achromatic (luminance) signal, so perhaps not worth reading in to. This feels very much like it was intenionally 'left blank', to avoid adding unverifiable magic numbers and doing fitting magic. As a result I am not convinced, I also *feel* that it's possible to experience a brightness sensation greater than *3 brights*, according to CAM18sl's own definition of *1 bright* (like, look at a lamp).
 
-In conclusion, I think the cone compression is likely not correct in terms of where it places the semi saturaion point. I suspect it's too low. Because of the very low upper limit, and the seemingly intentional lack of scaling, which screams: "we don't claim this is correct either".
+So... I think the cone compression is likely not correct in terms of where it places the semi saturation point. I suspect it's too low because of that low upper limit, and the seemingly intentional lack of scaling, which screams: "we don't claim this to be correct".
 
 But I respect it more than CIECAM02/CAM16, where the semi saturation point is placed so high up that the cone compression does effectively nothing. Might as well be a pure power.
 
